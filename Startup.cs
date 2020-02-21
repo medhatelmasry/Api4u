@@ -58,6 +58,8 @@ namespace Api4u
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthorization();

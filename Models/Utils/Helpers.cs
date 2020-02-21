@@ -71,6 +71,11 @@ namespace Api4u.Models.Utils
 
             return Path.GetFileName(uri.LocalPath);
         }
+
+        public static string GetHostUrl(HttpRequest request) {
+            var host = string.Format("{0}://{1}", request.Scheme, request.Host);
+            return host;
+        }
     }
 
 }

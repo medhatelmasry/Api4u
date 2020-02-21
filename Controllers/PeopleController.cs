@@ -26,8 +26,8 @@ namespace Api4u.Controllers
         private readonly IWebHostEnvironment _env;
 
 
-        public PeopleController(IConfiguration configuration, 
-            ToonsContext context, 
+        public PeopleController(IConfiguration configuration,
+            ToonsContext context,
             IWebHostEnvironment env
         )
         {
@@ -40,21 +40,34 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<People>>> GetPeople()
         {
-            return await _context.People.ToListAsync();
+            var people = await _context.People.ToListAsync();
+
+            foreach (var p in people)
+            {
+                var pos = p.PictureUrl.ToLower().IndexOf("/images");
+                var dbhost = p.PictureUrl.Substring(0, pos);
+                p.PictureUrl = p.PictureUrl.Replace(dbhost, Helpers.GetHostUrl(Request));
+            }
+
+            return people;
         }
 
         // GET: api/People/5
         [HttpGet("{id}")]
         public async Task<ActionResult<People>> GetPeople(int id)
         {
-            var people = await _context.People.FindAsync(id);
+            var person = await _context.People.FindAsync(id);
 
-            if (people == null)
+            if (person == null)
             {
                 return NotFound();
             }
 
-            return people;
+            var pos = person.PictureUrl.ToLower().IndexOf("/images");
+            var dbhost = person.PictureUrl.Substring(0, pos);
+            person.PictureUrl = person.PictureUrl.Replace(dbhost, Helpers.GetHostUrl(Request));
+
+            return person;
         }
 
         // PUT: api/People/5

@@ -44,9 +44,12 @@ namespace Api4u.Controllers
 
             foreach (var p in people)
             {
-                var pos = p.PictureUrl.ToLower().IndexOf("/images");
-                var dbhost = p.PictureUrl.Substring(0, pos);
-                p.PictureUrl = p.PictureUrl.Replace(dbhost, Helpers.GetHostUrl(Request));
+                if (!string.IsNullOrEmpty(p.PictureUrl))
+                {
+                    var pos = p.PictureUrl.ToLower().IndexOf("/images");
+                    var dbhost = p.PictureUrl.Substring(0, pos);
+                    p.PictureUrl = p.PictureUrl.Replace(dbhost, Helpers.GetHostUrl(Request));
+                }
             }
 
             return people;
@@ -63,10 +66,12 @@ namespace Api4u.Controllers
                 return NotFound();
             }
 
-            var pos = person.PictureUrl.ToLower().IndexOf("/images");
-            var dbhost = person.PictureUrl.Substring(0, pos);
-            person.PictureUrl = person.PictureUrl.Replace(dbhost, Helpers.GetHostUrl(Request));
-
+            if (!string.IsNullOrEmpty(person.PictureUrl))
+            {
+                var pos = person.PictureUrl.ToLower().IndexOf("/images");
+                var dbhost = person.PictureUrl.Substring(0, pos);
+                person.PictureUrl = person.PictureUrl.Replace(dbhost, Helpers.GetHostUrl(Request));
+            }
             return person;
         }
 
@@ -80,7 +85,8 @@ namespace Api4u.Controllers
                 || string.IsNullOrEmpty(people.LastName)
                 || string.IsNullOrEmpty(people.Occupation)
                 || string.IsNullOrEmpty(people.Gender)
-            ) return BadRequest("FirstName, LastName, Occupation and Gender are required.");
+                || string.IsNullOrEmpty(people.PictureUrl)
+            ) return BadRequest("FirstName, LastName, Occupation, Gender and PictureUrl are required.");
 
             if (id != people.Id)
             {
@@ -99,6 +105,7 @@ namespace Api4u.Controllers
             people.LastName = WebUtility.HtmlEncode(people.LastName);
             people.Occupation = WebUtility.HtmlEncode(people.Occupation);
             people.Gender = WebUtility.HtmlEncode(people.Gender);
+            people.PictureUrl = WebUtility.HtmlEncode(people.PictureUrl);
 
             _context.Entry(people).State = EntityState.Modified;
 
@@ -138,7 +145,8 @@ namespace Api4u.Controllers
                 || string.IsNullOrEmpty(people.LastName)
                 || string.IsNullOrEmpty(people.Occupation)
                 || string.IsNullOrEmpty(people.Gender)
-                ) return BadRequest("FirstName, LastName, Occupation and Gender are required.");
+                || string.IsNullOrEmpty(people.PictureUrl)
+                ) return BadRequest("FirstName, LastName, Occupation, Gender and PictureUrl are required.");
 
             if (!string.IsNullOrEmpty(people.PictureUrl))
             {
@@ -152,6 +160,7 @@ namespace Api4u.Controllers
             people.LastName = WebUtility.HtmlEncode(people.LastName);
             people.Occupation = WebUtility.HtmlEncode(people.Occupation);
             people.Gender = WebUtility.HtmlEncode(people.Gender);
+            people.PictureUrl = WebUtility.HtmlEncode(people.PictureUrl);
 
             _context.People.Add(people);
 

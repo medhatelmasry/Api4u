@@ -44,7 +44,7 @@ namespace Api4u
             // register swagger generator & define one swagger doc
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API4U", Version = "v1" });
             });
         }
 
@@ -69,7 +69,7 @@ namespace Api4u
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API4U V1");
             });
 
             app.UseEndpoints(endpoints =>

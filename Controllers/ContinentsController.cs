@@ -25,14 +25,18 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Continent>>> GetContinent()
         {
-            return await _context.Continent.ToListAsync();
+            return await _context.Continent
+            .Include(c => c.Countries)
+            .ToListAsync();
         }
 
         // GET: api/Continents/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Continent>> GetContinent(string id)
         {
-            var continent = await _context.Continent.FindAsync(id);
+            var continent = await _context.Continent
+            .Include(c => c.Countries)
+            .FirstOrDefaultAsync(i => i.ContinentName == id);
 
             if (continent == null)
             {

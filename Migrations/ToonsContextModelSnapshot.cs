@@ -913,7 +913,7 @@ namespace Api4u.Migrations
             modelBuilder.Entity("Api4u.Models.Movies.Actor", b =>
                 {
                     b.HasOne("Api4u.Models.Movies.Movie", "Movie")
-                        .WithMany()
+                        .WithMany("Actors")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

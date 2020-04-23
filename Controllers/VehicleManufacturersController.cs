@@ -25,14 +25,18 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VehicleManufacturer>>> GetVehicleManufacturers()
         {
-            return await _context.VehicleManufacturers.ToListAsync();
+            return await _context.VehicleManufacturers
+            .Include(v => v.Vehicles)
+            .ToListAsync();
         }
 
         // GET: api/VehicleManufacturers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VehicleManufacturer>> GetVehicleManufacturer(string id)
         {
-            var vehicleManufacturer = await _context.VehicleManufacturers.FindAsync(id);
+            var vehicleManufacturer = await _context.VehicleManufacturers
+            .Include(v => v.Vehicles)
+            .FirstOrDefaultAsync(i => i.VehicleManufacturerName == id);
 
             if (vehicleManufacturer == null)
             {

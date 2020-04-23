@@ -26,7 +26,6 @@ namespace Api4u.Controllers
         public async Task<ActionResult<IEnumerable<Organism>>> GetOrganism()
         {
             return await _context.Organism
-            .Include(o => o.Specie)
             .ToListAsync();
         }
 
@@ -35,9 +34,7 @@ namespace Api4u.Controllers
         public async Task<ActionResult<Organism>> GetOrganism(int id)
         {
             var organism = await _context.Organism
-            .Include(o => o.Specie)
             .FirstOrDefaultAsync(o => o.OrganismId == id);
-
 
             if (organism == null)
             {

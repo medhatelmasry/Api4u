@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Api4u.Models.Movies
@@ -20,5 +21,7 @@ namespace Api4u.Models.Movies
 
         [Required]
         public string Rating { get; set; }
+
+        public List<Actor> Actors { get; set; }
     }
 }

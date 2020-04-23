@@ -25,14 +25,18 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FoodCategory>>> GetFoodCategories()
         {
-            return await _context.FoodCategories.ToListAsync();
+            return await _context.FoodCategories
+            .Include(f => f.Foods)
+            .ToListAsync();
         }
 
         // GET: api/FoodCategories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<FoodCategory>> GetFoodCategory(int id)
         {
-            var foodCategory = await _context.FoodCategories.FindAsync(id);
+            var foodCategory = await _context.FoodCategories
+            .Include(f => f.Foods)
+            .FirstOrDefaultAsync(i => i.FoodCategoryId == id);
 
             if (foodCategory == null)
             {

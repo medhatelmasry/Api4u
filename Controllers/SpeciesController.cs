@@ -25,14 +25,18 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Specie>>> GetSpecie()
         {
-            return await _context.Specie.ToListAsync();
+            return await _context.Specie
+            .Include(s => s.Organisms)
+            .ToListAsync();
         }
 
         // GET: api/Species/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Specie>> GetSpecie(string id)
         {
-            var specie = await _context.Specie.FindAsync(id);
+            var specie = await _context.Specie
+            .Include(s => s.Organisms)
+            .FirstOrDefaultAsync(i => i.SpecieName == id);
 
             if (specie == null)
             {

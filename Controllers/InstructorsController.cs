@@ -25,14 +25,19 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Instructor>>> GetInstructors()
         {
-            return await _context.Instructors.ToListAsync();
+            return await _context.Instructors
+            .Include(i => i.Courses)
+            .ToListAsync();
         }
 
         // GET: api/Instructors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Instructor>> GetInstructor(int id)
         {
-            var instructor = await _context.Instructors.FindAsync(id);
+            var instructor = await _context.Instructors
+            .Include(i => i.Courses)
+            .FirstOrDefaultAsync(i => i.InstructorId == id);
+
 
             if (instructor == null)
             {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,5 +14,7 @@ namespace Api4u.Models.Foods
 
         [Required]
         public string Description { get; set; }
+
+        public List<Food> Foods { get; set; }
     }
 }

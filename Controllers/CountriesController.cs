@@ -26,7 +26,7 @@ namespace Api4u.Controllers
         public async Task<ActionResult<IEnumerable<Country>>> GetCountry()
         {
             return await _context.Country
-            .Include(c => c.Continent)
+            .Include(c => c.Provinces)
             .ToListAsync();
         }
 
@@ -35,7 +35,7 @@ namespace Api4u.Controllers
         public async Task<ActionResult<Country>> GetCountry(string id)
         {
             var country = await _context.Country
-            .Include(c => c.Continent)
+            .Include(c => c.Provinces)
             .FirstOrDefaultAsync(i => i.CountryName == id);
 
             if (country == null)

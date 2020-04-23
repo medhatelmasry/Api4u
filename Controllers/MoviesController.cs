@@ -25,14 +25,18 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovie()
         {
-            return await _context.Movie.ToListAsync();
+            return await _context.Movie
+            .Include(m => m.Actors)
+            .ToListAsync();
         }
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
-            var movie = await _context.Movie.FindAsync(id);
+            var movie = await _context.Movie
+            .Include(a => a.Actors)
+            .FirstOrDefaultAsync(i => i.MovieId == id);
 
             if (movie == null)
             {

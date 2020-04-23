@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,5 +11,7 @@ namespace Api4u.Models.Vehicles
 
         [Required]
         public string Country { get; set; }
+
+        public List<Vehicle> Vehicles { get; set; }
     }
 }

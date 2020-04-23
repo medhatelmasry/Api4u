@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Api4u.Models.Countries
@@ -6,5 +7,7 @@ namespace Api4u.Models.Countries
     {
         [Key]
         public string ContinentName { get; set; }
+
+        public List<Country> Countries { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,5 +20,7 @@ namespace Api4u.Models.Countries
 
         [ForeignKey("CountryName")] 
         public Country Country { get; set; }
+
+        public List<City> Cities { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
+
 namespace Api4u
 {
     public class Startup
@@ -46,6 +47,10 @@ namespace Api4u
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API4U", Version = "v1" });
             });
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

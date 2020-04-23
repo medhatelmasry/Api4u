@@ -26,7 +26,6 @@ namespace Api4u.Controllers
         public async Task<ActionResult<IEnumerable<Food>>> GetFoods()
         {
             return await _context.Foods
-            .Include(f => f.FoodCategory)
             .ToListAsync();
         }
 
@@ -35,8 +34,7 @@ namespace Api4u.Controllers
         public async Task<ActionResult<Food>> GetFood(int id)
         {
             var food = await _context.Foods
-                .Include(f => f.FoodCategory)
-                .FirstOrDefaultAsync(i => i.FoodId == id);
+                .FindAsync(id);
 
             if (food == null)
             {

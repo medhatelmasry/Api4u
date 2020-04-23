@@ -26,7 +26,6 @@ namespace Api4u.Controllers
         public async Task<ActionResult<IEnumerable<Course>>> GetCourses()
         {
             return await _context.Courses
-            .Include(c => c.Instructor)
             .ToListAsync();
         }
 
@@ -35,8 +34,7 @@ namespace Api4u.Controllers
         public async Task<ActionResult<Course>> GetCourse(string id)
         {
             var course = await _context.Courses
-                .Include(c => c.Instructor)
-                .FirstOrDefaultAsync(i => i.CourseId == id);
+                .FindAsync(id);
 
             if (course == null)
             {

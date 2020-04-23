@@ -25,7 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Continent>>> GetContinent()
         {
-            return await _context.Continent
+            return await _context.Continents
             .Include(c => c.Countries)
             .ToListAsync();
         }
@@ -34,7 +34,7 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Continent>> GetContinent(string id)
         {
-            var continent = await _context.Continent
+            var continent = await _context.Continents
             .Include(c => c.Countries)
             .FirstOrDefaultAsync(i => i.ContinentName == id);
 
@@ -84,7 +84,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Continent>> PostContinent(Continent continent)
         {
-            _context.Continent.Add(continent);
+            _context.Continents.Add(continent);
             try
             {
                 await _context.SaveChangesAsync();
@@ -108,13 +108,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Continent>> DeleteContinent(string id)
         {
-            var continent = await _context.Continent.FindAsync(id);
+            var continent = await _context.Continents.FindAsync(id);
             if (continent == null)
             {
                 return NotFound();
             }
 
-            _context.Continent.Remove(continent);
+            _context.Continents.Remove(continent);
             await _context.SaveChangesAsync();
 
             return continent;
@@ -122,7 +122,7 @@ namespace Api4u.Controllers
 
         private bool ContinentExists(string id)
         {
-            return _context.Continent.Any(e => e.ContinentName == id);
+            return _context.Continents.Any(e => e.ContinentName == id);
         }
     }
 }

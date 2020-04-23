@@ -1,4 +1,4 @@
-dotnet-ef migrations add CountryMovieSpecies -o Migrations
+dotnet-ef migrations add -o Migrations Athletes
 
 dotnet-ef database update
 
@@ -23,5 +23,10 @@ dotnet aspnet-codegenerator controller -name MoviesController -async -api -m Mov
 dotnet aspnet-codegenerator controller -name OrganismsController -async -api -m Organism -dc ToonsContext -outDir Controllers
 dotnet aspnet-codegenerator controller -name SpeciesController -async -api -m Specie -dc ToonsContext -outDir Controllers
 
+dotnet aspnet-codegenerator controller -name CompetitionsController -async -api -m Competition -dc ToonsContext -outDir Controllers
+dotnet aspnet-codegenerator controller -name AthletesController -async -api -m Athlete -dc ToonsContext -outDir Controllers
+
+dotnet aspnet-codegenerator controller -name TeamsController -async -api -m Team -dc ToonsContext -outDir Controllers
+dotnet aspnet-codegenerator controller -name PlayersController -async -api -m Player -dc ToonsContext -outDir Controllers
 
 

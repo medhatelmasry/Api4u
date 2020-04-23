@@ -25,7 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Province>>> GetProvince()
         {
-            return await _context.Province
+            return await _context.Provinces
             .Include(p => p.Cities)
             .ToListAsync();
         }
@@ -34,7 +34,7 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Province>> GetProvince(int id)
         {
-            var province = await _context.Province
+            var province = await _context.Provinces
             .Include(p => p.Cities)
             .FirstOrDefaultAsync(i => i.ProvinceId == id);
 
@@ -84,7 +84,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Province>> PostProvince(Province province)
         {
-            _context.Province.Add(province);
+            _context.Provinces.Add(province);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProvince", new { id = province.ProvinceId }, province);
@@ -94,13 +94,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Province>> DeleteProvince(int id)
         {
-            var province = await _context.Province.FindAsync(id);
+            var province = await _context.Provinces.FindAsync(id);
             if (province == null)
             {
                 return NotFound();
             }
 
-            _context.Province.Remove(province);
+            _context.Provinces.Remove(province);
             await _context.SaveChangesAsync();
 
             return province;
@@ -108,7 +108,7 @@ namespace Api4u.Controllers
 
         private bool ProvinceExists(int id)
         {
-            return _context.Province.Any(e => e.ProvinceId == id);
+            return _context.Provinces.Any(e => e.ProvinceId == id);
         }
     }
 }

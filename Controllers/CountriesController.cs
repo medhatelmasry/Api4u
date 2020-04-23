@@ -25,7 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Country>>> GetCountry()
         {
-            return await _context.Country
+            return await _context.Countries
             .Include(c => c.Provinces)
             .ToListAsync();
         }
@@ -34,7 +34,7 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Country>> GetCountry(string id)
         {
-            var country = await _context.Country
+            var country = await _context.Countries
             .Include(c => c.Provinces)
             .FirstOrDefaultAsync(i => i.CountryName == id);
 
@@ -84,7 +84,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Country>> PostCountry(Country country)
         {
-            _context.Country.Add(country);
+            _context.Countries.Add(country);
             try
             {
                 await _context.SaveChangesAsync();
@@ -108,13 +108,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Country>> DeleteCountry(string id)
         {
-            var country = await _context.Country.FindAsync(id);
+            var country = await _context.Countries.FindAsync(id);
             if (country == null)
             {
                 return NotFound();
             }
 
-            _context.Country.Remove(country);
+            _context.Countries.Remove(country);
             await _context.SaveChangesAsync();
 
             return country;
@@ -122,7 +122,7 @@ namespace Api4u.Controllers
 
         private bool CountryExists(string id)
         {
-            return _context.Country.Any(e => e.CountryName == id);
+            return _context.Countries.Any(e => e.CountryName == id);
         }
     }
 }

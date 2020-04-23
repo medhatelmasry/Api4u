@@ -25,8 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<City>>> GetCity()
         {
-            return await _context.City
-            .Include(c => c.Province)
+            return await _context.Cities
             .ToListAsync();
         }
 
@@ -34,9 +33,8 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<City>> GetCity(string id)
         {
-            var city = await _context.City
-                .Include(c => c.Province)
-                .FirstOrDefaultAsync(i => i.CityName == id);
+            var city = await _context.Cities
+                .FindAsync(id);
 
             if (city == null)
             {
@@ -84,7 +82,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<City>> PostCity(City city)
         {
-            _context.City.Add(city);
+            _context.Cities.Add(city);
             try
             {
                 await _context.SaveChangesAsync();
@@ -108,13 +106,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<City>> DeleteCity(string id)
         {
-            var city = await _context.City.FindAsync(id);
+            var city = await _context.Cities.FindAsync(id);
             if (city == null)
             {
                 return NotFound();
             }
 
-            _context.City.Remove(city);
+            _context.Cities.Remove(city);
             await _context.SaveChangesAsync();
 
             return city;
@@ -122,7 +120,7 @@ namespace Api4u.Controllers
 
         private bool CityExists(string id)
         {
-            return _context.City.Any(e => e.CityName == id);
+            return _context.Cities.Any(e => e.CityName == id);
         }
     }
 }

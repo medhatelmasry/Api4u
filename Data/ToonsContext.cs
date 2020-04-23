@@ -7,6 +7,9 @@ using Api4u.Models.Courses;
 using Api4u.Models.Countries;
 using Api4u.Models.Species;
 using Api4u.Models.Movies;
+using Api4u.Models.Athletics;
+using System;
+using Api4u.Models.Sports;
 
 namespace Api4u.Data
 {
@@ -38,10 +41,18 @@ namespace Api4u.Data
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Province> Provinces { get; set; }
+
         public virtual DbSet<Actor> Actors { get; set; }
         public virtual DbSet<Movie> Movies { get; set; }
+
         public virtual DbSet<Organism> Organisms { get; set; }
         public virtual DbSet<Specie> Species { get; set; }
+
+        public virtual DbSet<Competition> Competitions { get; set; }
+        public virtual DbSet<Athlete> Athletes { get; set; }
+
+        public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<Player> Players { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -210,23 +221,128 @@ namespace Api4u.Data
                 new { ActorId = 7, FirstName = "Rex", LastName="Harrison", MovieId=3 }
             );
             #endregion
+
+            #region "Seed Competition Data"
+            // https://www.worldathletics.org/world-rankings/overall-ranking/men
+            modelBuilder.Entity<Competition>().HasData(
+                new { CompetitionId = 1, EventName = "Men's 100m" },
+                new { CompetitionId = 2, EventName = "Men's Pole Vault" }, 
+                new { CompetitionId = 3, EventName = "Men's 50km Race Walking" },
+                new { CompetitionId = 4, EventName = "Women's 100m" }, 
+                new { CompetitionId = 5, EventName = "Women's 100m" }, 
+                new { CompetitionId = 6, EventName = "Women's Marathon" },
+                new { CompetitionId = 7, EventName = "Men's Marathon" }
+            );
+            #endregion
+
+            #region "Seed Athlete Data"
+            modelBuilder.Entity<Athlete>().HasData(
+                new { AthleteId = 1, FirstName = "Christian", LastName="Coleman",  
+                    DateOfBirth=new DateTime(1996,3,6), Country="USA", CompetitionId=1
+                },
+                new { AthleteId = 2, FirstName = "Zharnel", LastName="Hughes",  
+                    DateOfBirth=new DateTime(1995,7,13), Country="GBR", CompetitionId=1
+                },
+                new { AthleteId = 3, FirstName = "Brigid", LastName="Kosgei",  
+                    DateOfBirth=new DateTime(1994,2,20), Country="KEN", CompetitionId=6
+                },                
+                new { AthleteId = 4, FirstName = "Worknesh", LastName="Degefa",  
+                    DateOfBirth=new DateTime(1990,10,28), Country="ETH", CompetitionId=6
+                },                 
+                new { AthleteId = 5, FirstName = "Birhanu", LastName="Legese",  
+                    DateOfBirth=new DateTime(1994,9,11), Country="ETH", CompetitionId=7
+                },                 
+                new { AthleteId = 6, FirstName = "Lawrence", LastName="Cherono",  
+                    DateOfBirth=new DateTime(1988,8,7), Country="KEN", CompetitionId=7
+                },                 
+                new { AthleteId = 7, FirstName = "Armand", LastName="Duplantis",  
+                    DateOfBirth=new DateTime(1999,11,10), Country="SWE", CompetitionId=2
+                }                
+            );
+            #endregion
+
+            #region "Seed Team Data"
+            modelBuilder.Entity<Team>().HasData(
+                new { 
+                    TeamName="Canucks",
+                    City="Vancouver",
+                    Province="BC",
+                    Country="Canada" 
+                },
+                new { 
+                    TeamName="Sharks",
+                    City="San Jose",
+                    Province="CA",
+                    Country="USA" 
+                }, 
+                new { 
+                    TeamName="Oilers",
+                    City="Edmonton",
+                    Province="AB",
+                    Country="Canada"
+                },
+                new { 
+                    TeamName="Flames",
+                    City="Calgary",
+                    Province="AB",
+                    Country="Canada"
+                }, 
+                new { 
+                    TeamName="Ducks",
+                    City="Anaheim",
+                    Province="CA",
+                    Country="USA"
+                }, 
+                new { 
+                    TeamName="Lightening",
+                    City="Tampa Bay",
+                    Province="FL",
+                    Country="USA"
+                },
+                new { 
+                    TeamName="Blackhawks",
+                    City="Chicago",
+                    Province="IL",
+                    Country="USA"
+                }
+            );
+            #endregion
+
+            #region "Seed Player Data"
+            modelBuilder.Entity<Player>().HasData(
+                new {
+                    PlayerId = 1,
+                    FirstName = "Bob",
+                    LastName = "Fox",
+                    TeamName = "Canucks",
+                    Position = "Forward"
+                },
+                new { 
+                    PlayerId = 2,
+                    FirstName = "Sam",
+                    LastName = "Dix",
+                    TeamName = "Canucks",
+                    Position = "Left Wing"
+                }, 
+                new {
+                    PlayerId = 3,
+                    FirstName = "John",
+                    LastName = "Rooster",
+                    TeamName = "Flames",
+                    Position = "Right Wing" 
+                },
+                new { 
+                    PlayerId = 4,
+                    FirstName = "Pat",
+                    LastName = "Plumber",
+                    TeamName = "Oilers",
+                    Position = "Defense" 
+                }
+            );
+            #endregion
+
         }
 
-        public DbSet<Api4u.Models.Countries.Continent> Continent { get; set; }
-
-        public DbSet<Api4u.Models.Countries.City> City { get; set; }
-
-        public DbSet<Api4u.Models.Countries.Country> Country { get; set; }
-
-        public DbSet<Api4u.Models.Countries.Province> Province { get; set; }
-
-        public DbSet<Api4u.Models.Movies.Actor> Actor { get; set; }
-
-        public DbSet<Api4u.Models.Movies.Movie> Movie { get; set; }
-
-        public DbSet<Api4u.Models.Species.Organism> Organism { get; set; }
-
-        public DbSet<Api4u.Models.Species.Specie> Specie { get; set; }
     }
 
 }

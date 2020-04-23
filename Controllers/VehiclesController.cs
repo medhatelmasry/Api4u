@@ -26,7 +26,6 @@ namespace Api4u.Controllers
         public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
         {
             return await _context.Vehicles
-                .Include(v => v.VehicleManufacturer)
                 .ToListAsync();
         }
 
@@ -35,8 +34,7 @@ namespace Api4u.Controllers
         public async Task<ActionResult<Vehicle>> GetVehicle(string id)
         {
             var vehicle = await _context.Vehicles
-                .Include(v => v.VehicleManufacturer)
-                .FirstOrDefaultAsync(i => i.Model == id);
+                .FindAsync(id);
 
             if (vehicle == null)
             {

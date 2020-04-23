@@ -25,8 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Actor>>> GetActor()
         {
-            return await _context.Actor
-            .Include(a => a.Movie)
+            return await _context.Actors
             .ToListAsync();
         }
 
@@ -34,9 +33,8 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Actor>> GetActor(int id)
         {
-            var actor = await _context.Actor
-            .Include(a => a.Movie)
-            .FirstOrDefaultAsync(i => i.ActorId == id);
+            var actor = await _context.Actors
+            .FindAsync(id);
 
             if (actor == null)
             {
@@ -84,7 +82,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Actor>> PostActor(Actor actor)
         {
-            _context.Actor.Add(actor);
+            _context.Actors.Add(actor);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetActor", new { id = actor.ActorId }, actor);
@@ -94,13 +92,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Actor>> DeleteActor(int id)
         {
-            var actor = await _context.Actor.FindAsync(id);
+            var actor = await _context.Actors.FindAsync(id);
             if (actor == null)
             {
                 return NotFound();
             }
 
-            _context.Actor.Remove(actor);
+            _context.Actors.Remove(actor);
             await _context.SaveChangesAsync();
 
             return actor;
@@ -108,7 +106,7 @@ namespace Api4u.Controllers
 
         private bool ActorExists(int id)
         {
-            return _context.Actor.Any(e => e.ActorId == id);
+            return _context.Actors.Any(e => e.ActorId == id);
         }
     }
 }

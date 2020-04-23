@@ -25,7 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Organism>>> GetOrganism()
         {
-            return await _context.Organism
+            return await _context.Organisms
             .ToListAsync();
         }
 
@@ -33,8 +33,8 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Organism>> GetOrganism(int id)
         {
-            var organism = await _context.Organism
-            .FirstOrDefaultAsync(o => o.OrganismId == id);
+            var organism = await _context.Organisms
+            .FindAsync(id);
 
             if (organism == null)
             {
@@ -82,7 +82,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Organism>> PostOrganism(Organism organism)
         {
-            _context.Organism.Add(organism);
+            _context.Organisms.Add(organism);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrganism", new { id = organism.OrganismId }, organism);
@@ -92,13 +92,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Organism>> DeleteOrganism(int id)
         {
-            var organism = await _context.Organism.FindAsync(id);
+            var organism = await _context.Organisms.FindAsync(id);
             if (organism == null)
             {
                 return NotFound();
             }
 
-            _context.Organism.Remove(organism);
+            _context.Organisms.Remove(organism);
             await _context.SaveChangesAsync();
 
             return organism;
@@ -106,7 +106,7 @@ namespace Api4u.Controllers
 
         private bool OrganismExists(int id)
         {
-            return _context.Organism.Any(e => e.OrganismId == id);
+            return _context.Organisms.Any(e => e.OrganismId == id);
         }
     }
 }

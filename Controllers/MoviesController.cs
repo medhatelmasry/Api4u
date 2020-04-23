@@ -25,7 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovie()
         {
-            return await _context.Movie
+            return await _context.Movies
             .Include(m => m.Actors)
             .ToListAsync();
         }
@@ -34,7 +34,7 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
-            var movie = await _context.Movie
+            var movie = await _context.Movies
             .Include(a => a.Actors)
             .FirstOrDefaultAsync(i => i.MovieId == id);
 
@@ -84,7 +84,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            _context.Movie.Add(movie);
+            _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMovie", new { id = movie.MovieId }, movie);
@@ -94,13 +94,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Movie>> DeleteMovie(int id)
         {
-            var movie = await _context.Movie.FindAsync(id);
+            var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
             {
                 return NotFound();
             }
 
-            _context.Movie.Remove(movie);
+            _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
 
             return movie;
@@ -108,7 +108,7 @@ namespace Api4u.Controllers
 
         private bool MovieExists(int id)
         {
-            return _context.Movie.Any(e => e.MovieId == id);
+            return _context.Movies.Any(e => e.MovieId == id);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Api4u.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Specie>>> GetSpecie()
         {
-            return await _context.Specie
+            return await _context.Species
             .Include(s => s.Organisms)
             .ToListAsync();
         }
@@ -34,7 +34,7 @@ namespace Api4u.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Specie>> GetSpecie(string id)
         {
-            var specie = await _context.Specie
+            var specie = await _context.Species
             .Include(s => s.Organisms)
             .FirstOrDefaultAsync(i => i.SpecieName == id);
 
@@ -84,7 +84,7 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Specie>> PostSpecie(Specie specie)
         {
-            _context.Specie.Add(specie);
+            _context.Species.Add(specie);
             try
             {
                 await _context.SaveChangesAsync();
@@ -108,13 +108,13 @@ namespace Api4u.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Specie>> DeleteSpecie(string id)
         {
-            var specie = await _context.Specie.FindAsync(id);
+            var specie = await _context.Species.FindAsync(id);
             if (specie == null)
             {
                 return NotFound();
             }
 
-            _context.Specie.Remove(specie);
+            _context.Species.Remove(specie);
             await _context.SaveChangesAsync();
 
             return specie;
@@ -122,7 +122,7 @@ namespace Api4u.Controllers
 
         private bool SpecieExists(string id)
         {
-            return _context.Specie.Any(e => e.SpecieName == id);
+            return _context.Species.Any(e => e.SpecieName == id);
         }
     }
 }

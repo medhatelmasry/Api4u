@@ -4,14 +4,16 @@ using Api4u.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api4u.Migrations
 {
     [DbContext(typeof(ToonsContext))]
-    partial class ToonsContextModelSnapshot : ModelSnapshot
+    [Migration("20200423195256_Athletes")]
+    partial class Athletes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -864,140 +866,6 @@ namespace Api4u.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Api4u.Models.Sports.Player", b =>
-                {
-                    b.Property<int>("PlayerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TeamName")
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("PlayerId");
-
-                    b.HasIndex("TeamName");
-
-                    b.ToTable("Players");
-
-                    b.HasData(
-                        new
-                        {
-                            PlayerId = 1,
-                            FirstName = "Bob",
-                            LastName = "Fox",
-                            Position = "Forward",
-                            TeamName = "Canucks"
-                        },
-                        new
-                        {
-                            PlayerId = 2,
-                            FirstName = "Sam",
-                            LastName = "Dix",
-                            Position = "Left Wing",
-                            TeamName = "Canucks"
-                        },
-                        new
-                        {
-                            PlayerId = 3,
-                            FirstName = "John",
-                            LastName = "Rooster",
-                            Position = "Right Wing",
-                            TeamName = "Flames"
-                        },
-                        new
-                        {
-                            PlayerId = 4,
-                            FirstName = "Pat",
-                            LastName = "Plumber",
-                            Position = "Defense",
-                            TeamName = "Oilers"
-                        });
-                });
-
-            modelBuilder.Entity("Api4u.Models.Sports.Team", b =>
-                {
-                    b.Property<string>("TeamName")
-                        .HasColumnType("nvarchar(30)")
-                        .HasMaxLength(30);
-
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Province")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TeamName");
-
-                    b.ToTable("Teams");
-
-                    b.HasData(
-                        new
-                        {
-                            TeamName = "Canucks",
-                            City = "Vancouver",
-                            Country = "Canada",
-                            Province = "BC"
-                        },
-                        new
-                        {
-                            TeamName = "Sharks",
-                            City = "San Jose",
-                            Country = "USA",
-                            Province = "CA"
-                        },
-                        new
-                        {
-                            TeamName = "Oilers",
-                            City = "Edmonton",
-                            Country = "Canada",
-                            Province = "AB"
-                        },
-                        new
-                        {
-                            TeamName = "Flames",
-                            City = "Calgary",
-                            Country = "Canada",
-                            Province = "AB"
-                        },
-                        new
-                        {
-                            TeamName = "Ducks",
-                            City = "Anaheim",
-                            Country = "USA",
-                            Province = "CA"
-                        },
-                        new
-                        {
-                            TeamName = "Lightening",
-                            City = "Tampa Bay",
-                            Country = "USA",
-                            Province = "FL"
-                        },
-                        new
-                        {
-                            TeamName = "Blackhawks",
-                            City = "Chicago",
-                            Country = "USA",
-                            Province = "IL"
-                        });
-                });
-
             modelBuilder.Entity("Api4u.Models.Students.Student", b =>
                 {
                     b.Property<string>("StudentId")
@@ -1220,13 +1088,6 @@ namespace Api4u.Migrations
                         .HasForeignKey("SpecieName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Api4u.Models.Sports.Player", b =>
-                {
-                    b.HasOne("Api4u.Models.Sports.Team", "Team")
-                        .WithMany("Players")
-                        .HasForeignKey("TeamName");
                 });
 
             modelBuilder.Entity("Api4u.Models.Vehicles.Vehicle", b =>

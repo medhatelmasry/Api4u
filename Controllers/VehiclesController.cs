@@ -12,6 +12,7 @@ namespace Api4u.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Microsoft.AspNetCore.Cors.EnableCors("ToonsPolicy")]
     public class VehiclesController : ControllerBase
     {
         private readonly ToonsContext _context;

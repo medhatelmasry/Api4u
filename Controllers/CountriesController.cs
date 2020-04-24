@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Countries;
+using Microsoft.AspNetCore.Cors;
 
 namespace Api4u.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("ToonsPolicy")]
     public class CountriesController : ControllerBase
     {
         private readonly ToonsContext _context;

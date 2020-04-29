@@ -113,8 +113,6 @@ namespace Api4u.Controllers
             student.LastName = WebUtility.HtmlEncode(student.LastName);
             student.School = WebUtility.HtmlEncode(student.School);
 
-
-
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 

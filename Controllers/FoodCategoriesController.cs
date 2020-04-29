@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Foods;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class FoodCategoriesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public FoodCategoriesController(ToonsContext context)
+        public FoodCategoriesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -53,10 +56,17 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFoodCategory(int id, FoodCategory foodCategory)
         {
+            if (string.IsNullOrEmpty(foodCategory.Name)
+                || string.IsNullOrEmpty(foodCategory.Description)
+            ) return BadRequest("Name and description are required.");
+
             if (id != foodCategory.FoodCategoryId)
             {
                 return BadRequest();
             }
+
+            foodCategory.Name = System.Net.WebUtility.HtmlEncode(foodCategory.Name);
+            foodCategory.Description = System.Net.WebUtility.HtmlEncode(foodCategory.Description);
 
             _context.Entry(foodCategory).State = EntityState.Modified;
 
@@ -85,7 +95,22 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<FoodCategory>> PostFoodCategory(FoodCategory foodCategory)
         {
+            if (string.IsNullOrEmpty(foodCategory.Name)
+                || string.IsNullOrEmpty(foodCategory.Description)
+            ) return BadRequest("Name and description are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.FoodCategories.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            foodCategory.Name = System.Net.WebUtility.HtmlEncode(foodCategory.Name);
+            foodCategory.Description = System.Net.WebUtility.HtmlEncode(foodCategory.Description);
+
             _context.FoodCategories.Add(foodCategory);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFoodCategory", new { id = foodCategory.FoodCategoryId }, foodCategory);

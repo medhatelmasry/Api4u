@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Movies;
 using Microsoft.AspNetCore.Cors;
+using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -17,9 +19,11 @@ namespace Api4u.Controllers
     public class ActorsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ActorsController(ToonsContext context)
+        public ActorsController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -52,10 +56,17 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutActor(int id, Actor actor)
         {
+            if (string.IsNullOrEmpty(actor.FirstName)
+                || string.IsNullOrEmpty(actor.LastName)
+            ) return BadRequest("FirstName and LastName are required.");
+
             if (id != actor.ActorId)
             {
                 return BadRequest();
             }
+
+            actor.FirstName = WebUtility.HtmlEncode(actor.FirstName);
+            actor.LastName = WebUtility.HtmlEncode(actor.LastName);
 
             _context.Entry(actor).State = EntityState.Modified;
 
@@ -84,6 +95,16 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Actor>> PostActor(Actor actor)
         {
+            if (string.IsNullOrEmpty(actor.FirstName)
+                || string.IsNullOrEmpty(actor.LastName)
+            ) return BadRequest("FirstName and LastName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Actors.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
             _context.Actors.Add(actor);
             await _context.SaveChangesAsync();
 
@@ -100,7 +121,11 @@ namespace Api4u.Controllers
                 return NotFound();
             }
 
+            actor.FirstName = WebUtility.HtmlEncode(actor.FirstName);
+            actor.LastName = WebUtility.HtmlEncode(actor.LastName);
+
             _context.Actors.Remove(actor);
+
             await _context.SaveChangesAsync();
 
             return actor;

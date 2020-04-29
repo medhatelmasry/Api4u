@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Courses;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -17,9 +18,11 @@ namespace Api4u.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public CoursesController(ToonsContext context)
+        public CoursesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -52,10 +55,17 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCourse(string id, Course course)
         {
+            if (string.IsNullOrEmpty(course.Name)
+                || string.IsNullOrEmpty(course.CourseId)
+            ) return BadRequest("Name,  and CourseId are required.");
+
             if (id != course.CourseId)
             {
                 return BadRequest();
             }
+
+            course.CourseId = System.Net.WebUtility.HtmlEncode(course.CourseId);
+            course.Name = System.Net.WebUtility.HtmlEncode(course.Name);
 
             _context.Entry(course).State = EntityState.Modified;
 
@@ -84,7 +94,22 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Course>> PostCourse(Course course)
         {
+            if (string.IsNullOrEmpty(course.Name)
+                || string.IsNullOrEmpty(course.CourseId)
+            ) return BadRequest("Name,  and CourseId are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Courses.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            course.CourseId = System.Net.WebUtility.HtmlEncode(course.CourseId);
+            course.Name = System.Net.WebUtility.HtmlEncode(course.Name);
+
             _context.Courses.Add(course);
+            
             try
             {
                 await _context.SaveChangesAsync();

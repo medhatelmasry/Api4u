@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Countries;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -17,9 +18,11 @@ namespace Api4u.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public CountriesController(ToonsContext context)
+        public CountriesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -54,10 +57,19 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCountry(string id, Country country)
         {
+            if (string.IsNullOrEmpty(country.CountryName)
+                || string.IsNullOrEmpty(country.CapitalCity)
+                || string.IsNullOrEmpty(country.ContinentName)
+            ) return BadRequest("CountryName, CapitalCity and ContinentName are required.");
+
             if (id != country.CountryName)
             {
                 return BadRequest();
             }
+
+            country.CountryName = System.Net.WebUtility.HtmlEncode(country.CountryName);
+            country.CapitalCity = System.Net.WebUtility.HtmlEncode(country.CapitalCity);
+            country.ContinentName = System.Net.WebUtility.HtmlEncode(country.ContinentName);
 
             _context.Entry(country).State = EntityState.Modified;
 
@@ -86,7 +98,24 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Country>> PostCountry(Country country)
         {
+            if (string.IsNullOrEmpty(country.CountryName)
+                || string.IsNullOrEmpty(country.CapitalCity)
+                || string.IsNullOrEmpty(country.ContinentName)
+            ) return BadRequest("CountryName, CapitalCity and ContinentName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Countries.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            country.CountryName = System.Net.WebUtility.HtmlEncode(country.CountryName);
+            country.CapitalCity = System.Net.WebUtility.HtmlEncode(country.CapitalCity);
+            country.ContinentName = System.Net.WebUtility.HtmlEncode(country.ContinentName);
+
             _context.Countries.Add(country);
+            
             try
             {
                 await _context.SaveChangesAsync();

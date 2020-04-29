@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Species;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class SpeciesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public SpeciesController(ToonsContext context)
+        public SpeciesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -53,10 +56,15 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSpecie(string id, Specie specie)
         {
+            if (string.IsNullOrEmpty(specie.SpecieName)
+            ) return BadRequest("SpecieName IS required.");
+
             if (id != specie.SpecieName)
             {
                 return BadRequest();
             }
+
+            specie.SpecieName = System.Net.WebUtility.HtmlEncode(specie.SpecieName);
 
             _context.Entry(specie).State = EntityState.Modified;
 
@@ -85,7 +93,20 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Specie>> PostSpecie(Specie specie)
         {
+            if (string.IsNullOrEmpty(specie.SpecieName)
+            ) return BadRequest("SpecieName IS required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Species.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            specie.SpecieName = System.Net.WebUtility.HtmlEncode(specie.SpecieName);
+
             _context.Species.Add(specie);
+            
             try
             {
                 await _context.SaveChangesAsync();

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Countries;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -17,9 +18,11 @@ namespace Api4u.Controllers
     public class CitiesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public CitiesController(ToonsContext context)
+        public CitiesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -52,10 +55,15 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCity(string id, City city)
         {
+            if (string.IsNullOrEmpty(city.CityName)
+            ) return BadRequest("CityName is required.");
+
             if (id != city.CityName)
             {
                 return BadRequest();
             }
+
+            city.CityName = System.Net.WebUtility.HtmlEncode(city.CityName);
 
             _context.Entry(city).State = EntityState.Modified;
 
@@ -84,7 +92,20 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<City>> PostCity(City city)
         {
+            if (string.IsNullOrEmpty(city.CityName)
+            ) return BadRequest("CityName is required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Cities.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            city.CityName = System.Net.WebUtility.HtmlEncode(city.CityName);
+
             _context.Cities.Add(city);
+            
             try
             {
                 await _context.SaveChangesAsync();

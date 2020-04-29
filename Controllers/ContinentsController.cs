@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Countries;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -17,9 +18,11 @@ namespace Api4u.Controllers
     public class ContinentsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ContinentsController(ToonsContext context)
+        public ContinentsController(IConfiguration configuration,ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -54,11 +57,16 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutContinent(string id, Continent continent)
         {
+            if (string.IsNullOrEmpty(continent.ContinentName)
+            ) return BadRequest("ContinentName is required.");
+
             if (id != continent.ContinentName)
             {
                 return BadRequest();
             }
 
+            continent.ContinentName = System.Net.WebUtility.HtmlEncode(continent.ContinentName);
+    
             _context.Entry(continent).State = EntityState.Modified;
 
             try
@@ -86,7 +94,20 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Continent>> PostContinent(Continent continent)
         {
+            if (string.IsNullOrEmpty(continent.ContinentName)
+            ) return BadRequest("ContinentName is required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Continents.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            continent.ContinentName = System.Net.WebUtility.HtmlEncode(continent.ContinentName);
+    
             _context.Continents.Add(continent);
+            
             try
             {
                 await _context.SaveChangesAsync();

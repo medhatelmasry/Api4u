@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Athletics;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -17,9 +18,11 @@ namespace Api4u.Controllers
     public class CompetitionsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public CompetitionsController(ToonsContext context)
+        public CompetitionsController(IConfiguration configuration,ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -54,10 +57,15 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCompetition(int id, Competition competition)
         {
+            if (string.IsNullOrEmpty(competition.EventName)
+            ) return BadRequest("EventName  required.");
+
             if (id != competition.CompetitionId)
             {
                 return BadRequest();
             }
+
+            competition.EventName = System.Net.WebUtility.HtmlEncode(competition.EventName);
 
             _context.Entry(competition).State = EntityState.Modified;
 
@@ -86,7 +94,20 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Competition>> PostCompetition(Competition competition)
         {
+            if (string.IsNullOrEmpty(competition.EventName)
+            ) return BadRequest("EventName  required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Competitions.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            competition.EventName = System.Net.WebUtility.HtmlEncode(competition.EventName);
+
             _context.Competitions.Add(competition);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCompetition", new { id = competition.CompetitionId }, competition);

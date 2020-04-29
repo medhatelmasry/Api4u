@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Foods;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class FoodsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public FoodsController(ToonsContext context)
+        public FoodsController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -51,10 +54,17 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFood(int id, Food food)
         {
+            if (string.IsNullOrEmpty(food.Name)
+                || string.IsNullOrEmpty(food.Unit)
+            ) return BadRequest("Name and Unit are required.");
+
             if (id != food.FoodId)
             {
                 return BadRequest();
             }
+
+            food.Name = System.Net.WebUtility.HtmlEncode(food.Name);
+            food.Unit = System.Net.WebUtility.HtmlEncode(food.Unit);
 
             _context.Entry(food).State = EntityState.Modified;
 
@@ -83,7 +93,22 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Food>> PostFood(Food food)
         {
+            if (string.IsNullOrEmpty(food.Name)
+                || string.IsNullOrEmpty(food.Unit)
+            ) return BadRequest("Name and Unit are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Foods.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            food.Name = System.Net.WebUtility.HtmlEncode(food.Name);
+            food.Unit = System.Net.WebUtility.HtmlEncode(food.Unit);
+
             _context.Foods.Add(food);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFood", new { id = food.FoodId }, food);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Vehicles;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class VehiclesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public VehiclesController(ToonsContext context)
+        public VehiclesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -51,10 +54,21 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVehicle(string id, Vehicle vehicle)
         {
+            if (string.IsNullOrEmpty(vehicle.Model)
+                || string.IsNullOrEmpty(vehicle.Fuel)
+                || string.IsNullOrEmpty(vehicle.Type)
+                || string.IsNullOrEmpty(vehicle.VehicleManufacturerName)
+            ) return BadRequest("Model, Fuel, Type and VehicleManufacturerName are required.");
+
             if (id != vehicle.Model)
             {
                 return BadRequest();
             }
+
+            vehicle.Model = System.Net.WebUtility.HtmlEncode(vehicle.Model);
+            vehicle.Fuel = System.Net.WebUtility.HtmlEncode(vehicle.Fuel);
+            vehicle.Type = System.Net.WebUtility.HtmlEncode(vehicle.Type);
+            vehicle.VehicleManufacturerName = System.Net.WebUtility.HtmlEncode(vehicle.VehicleManufacturerName);
 
             _context.Entry(vehicle).State = EntityState.Modified;
 
@@ -83,7 +97,26 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
+            if (string.IsNullOrEmpty(vehicle.Model)
+                || string.IsNullOrEmpty(vehicle.Fuel)
+                || string.IsNullOrEmpty(vehicle.Type)
+                || string.IsNullOrEmpty(vehicle.VehicleManufacturerName)
+            ) return BadRequest("Model, Fuel, Type and VehicleManufacturerName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Vehicles.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            vehicle.Model = System.Net.WebUtility.HtmlEncode(vehicle.Model);
+            vehicle.Fuel = System.Net.WebUtility.HtmlEncode(vehicle.Fuel);
+            vehicle.Type = System.Net.WebUtility.HtmlEncode(vehicle.Type);
+            vehicle.VehicleManufacturerName = System.Net.WebUtility.HtmlEncode(vehicle.VehicleManufacturerName);
+
             _context.Vehicles.Add(vehicle);
+            
             try
             {
                 await _context.SaveChangesAsync();

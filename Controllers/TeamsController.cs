@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Sports;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class TeamsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public TeamsController(ToonsContext context)
+        public TeamsController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -37,7 +40,7 @@ namespace Api4u.Controllers
         {
             var team = await _context.Teams
             .Include(t => t.Players)
-            .FirstOrDefaultAsync(i => i.TeamName == id);;
+            .FirstOrDefaultAsync(i => i.TeamName == id); ;
 
             if (team == null)
             {
@@ -53,10 +56,21 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTeam(string id, Team team)
         {
+            if (string.IsNullOrEmpty(team.TeamName)
+                || string.IsNullOrEmpty(team.City)
+                || string.IsNullOrEmpty(team.Province)
+                || string.IsNullOrEmpty(team.Country)
+            ) return BadRequest("TeamName, City, Province and Country are required.");
+
             if (id != team.TeamName)
             {
                 return BadRequest();
             }
+
+            team.Country = System.Net.WebUtility.HtmlEncode(team.Country);
+            team.City = System.Net.WebUtility.HtmlEncode(team.City);
+            team.TeamName = System.Net.WebUtility.HtmlEncode(team.TeamName);
+            team.Province = System.Net.WebUtility.HtmlEncode(team.Province);
 
             _context.Entry(team).State = EntityState.Modified;
 
@@ -85,7 +99,26 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Team>> PostTeam(Team team)
         {
+            if (string.IsNullOrEmpty(team.TeamName)
+                || string.IsNullOrEmpty(team.City)
+                || string.IsNullOrEmpty(team.Province)
+                || string.IsNullOrEmpty(team.Country)
+            ) return BadRequest("TeamName, City, Province and Country are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Teams.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            team.Country = System.Net.WebUtility.HtmlEncode(team.Country);
+            team.City = System.Net.WebUtility.HtmlEncode(team.City);
+            team.TeamName = System.Net.WebUtility.HtmlEncode(team.TeamName);
+            team.Province = System.Net.WebUtility.HtmlEncode(team.Province);
+
             _context.Teams.Add(team);
+            
             try
             {
                 await _context.SaveChangesAsync();

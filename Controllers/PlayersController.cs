@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Sports;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class PlayersController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public PlayersController(ToonsContext context)
+        public PlayersController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -49,10 +52,21 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPlayer(int id, Player player)
         {
+            if (string.IsNullOrEmpty(player.Position)
+                || string.IsNullOrEmpty(player.FirstName)
+                || string.IsNullOrEmpty(player.LastName)
+                || string.IsNullOrEmpty(player.TeamName)
+            ) return BadRequest("Position, TeamName, FirstName and LastName are required.");
+
             if (id != player.PlayerId)
             {
                 return BadRequest();
             }
+
+            player.Position = System.Net.WebUtility.HtmlEncode(player.Position);
+            player.FirstName = System.Net.WebUtility.HtmlEncode(player.FirstName);
+            player.LastName = System.Net.WebUtility.HtmlEncode(player.LastName);
+            player.TeamName = System.Net.WebUtility.HtmlEncode(player.TeamName);
 
             _context.Entry(player).State = EntityState.Modified;
 
@@ -81,7 +95,26 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Player>> PostPlayer(Player player)
         {
+            if (string.IsNullOrEmpty(player.Position)
+                || string.IsNullOrEmpty(player.FirstName)
+                || string.IsNullOrEmpty(player.LastName)
+                || string.IsNullOrEmpty(player.TeamName)
+            ) return BadRequest("Position, TeamName, FirstName and LastName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Players.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            player.Position = System.Net.WebUtility.HtmlEncode(player.Position);
+            player.FirstName = System.Net.WebUtility.HtmlEncode(player.FirstName);
+            player.LastName = System.Net.WebUtility.HtmlEncode(player.LastName);
+            player.TeamName = System.Net.WebUtility.HtmlEncode(player.TeamName);
+
             _context.Players.Add(player);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPlayer", new { id = player.PlayerId }, player);

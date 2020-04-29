@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Courses;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class InstructorsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public InstructorsController(ToonsContext context)
+        public InstructorsController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -54,10 +57,19 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInstructor(int id, Instructor instructor)
         {
+            if (string.IsNullOrEmpty(instructor.Email)
+                || string.IsNullOrEmpty(instructor.FirstName)
+                || string.IsNullOrEmpty(instructor.LastName)
+            ) return BadRequest("Email, FirstName and LastName are required.");
+
             if (id != instructor.InstructorId)
             {
                 return BadRequest();
             }
+
+            instructor.Email = System.Net.WebUtility.HtmlEncode(instructor.Email);
+            instructor.FirstName = System.Net.WebUtility.HtmlEncode(instructor.FirstName);
+            instructor.LastName = System.Net.WebUtility.HtmlEncode(instructor.LastName);
 
             _context.Entry(instructor).State = EntityState.Modified;
 
@@ -86,7 +98,24 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Instructor>> PostInstructor(Instructor instructor)
         {
+            if (string.IsNullOrEmpty(instructor.Email)
+                || string.IsNullOrEmpty(instructor.FirstName)
+                || string.IsNullOrEmpty(instructor.LastName)
+            ) return BadRequest("Email, FirstName and LastName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Instructors.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            instructor.Email = System.Net.WebUtility.HtmlEncode(instructor.Email);
+            instructor.FirstName = System.Net.WebUtility.HtmlEncode(instructor.FirstName);
+            instructor.LastName = System.Net.WebUtility.HtmlEncode(instructor.LastName);
+
             _context.Instructors.Add(instructor);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetInstructor", new { id = instructor.InstructorId }, instructor);

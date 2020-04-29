@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Countries;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class ProvincesController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ProvincesController(ToonsContext context)
+        public ProvincesController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -53,10 +56,19 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProvince(int id, Province province)
         {
+            if (string.IsNullOrEmpty(province.Name)
+                || string.IsNullOrEmpty(province.CapitalCity)
+                || string.IsNullOrEmpty(province.CountryName)
+            ) return BadRequest("Name, CapitalCity and CountryName are required.");
+
             if (id != province.ProvinceId)
             {
                 return BadRequest();
             }
+
+            province.Name = System.Net.WebUtility.HtmlEncode(province.Name);
+            province.CapitalCity = System.Net.WebUtility.HtmlEncode(province.CapitalCity);
+            province.CountryName = System.Net.WebUtility.HtmlEncode(province.CountryName);
 
             _context.Entry(province).State = EntityState.Modified;
 
@@ -85,7 +97,24 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Province>> PostProvince(Province province)
         {
+            if (string.IsNullOrEmpty(province.Name)
+                || string.IsNullOrEmpty(province.CapitalCity)
+                || string.IsNullOrEmpty(province.CountryName)
+            ) return BadRequest("Name, CapitalCity and CountryName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Provinces.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            province.Name = System.Net.WebUtility.HtmlEncode(province.Name);
+            province.CapitalCity = System.Net.WebUtility.HtmlEncode(province.CapitalCity);
+            province.CountryName = System.Net.WebUtility.HtmlEncode(province.CountryName);
+
             _context.Provinces.Add(province);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProvince", new { id = province.ProvinceId }, province);

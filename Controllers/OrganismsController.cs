@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
 using Api4u.Models.Species;
+using Microsoft.Extensions.Configuration;
 
 namespace Api4u.Controllers
 {
@@ -16,9 +17,11 @@ namespace Api4u.Controllers
     public class OrganismsController : ControllerBase
     {
         private readonly ToonsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public OrganismsController(ToonsContext context)
+        public OrganismsController(IConfiguration configuration, ToonsContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -51,10 +54,17 @@ namespace Api4u.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrganism(int id, Organism organism)
         {
+            if (string.IsNullOrEmpty(organism.Name)
+                || string.IsNullOrEmpty(organism.SpecieName)
+            ) return BadRequest("Name and SpecieName are required.");
+
             if (id != organism.OrganismId)
             {
                 return BadRequest();
             }
+
+            organism.Name = System.Net.WebUtility.HtmlEncode(organism.Name);
+            organism.SpecieName = System.Net.WebUtility.HtmlEncode(organism.SpecieName);
 
             _context.Entry(organism).State = EntityState.Modified;
 
@@ -83,7 +93,22 @@ namespace Api4u.Controllers
         [HttpPost]
         public async Task<ActionResult<Organism>> PostOrganism(Organism organism)
         {
+            if (string.IsNullOrEmpty(organism.Name)
+                || string.IsNullOrEmpty(organism.SpecieName)
+            ) return BadRequest("Name and SpecieName are required.");
+
+            string strMaxTblSize = _configuration["MaxTableSize"];
+
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Organisms.Count() > Convert.ToInt32(strMaxTblSize))
+            {
+                return BadRequest($"Number of records exceeded {strMaxTblSize}.");
+            }
+
+            organism.Name = System.Net.WebUtility.HtmlEncode(organism.Name);
+            organism.SpecieName = System.Net.WebUtility.HtmlEncode(organism.SpecieName);
+
             _context.Organisms.Add(organism);
+            
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrganism", new { id = organism.OrganismId }, organism);

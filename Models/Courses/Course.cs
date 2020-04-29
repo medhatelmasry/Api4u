@@ -7,7 +7,10 @@ namespace Api4u.Models.Courses
     {
         [Key]
         public string CourseId { get; set; }
+
+        [Required]
         public string Name { get; set; }
+
         public int InstructorId { get; set; }
                 
         [ForeignKey("InstructorId")] 

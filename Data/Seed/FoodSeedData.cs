@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Api4u.Models.Foods;
 
-namespace Api4u.Data
+namespace Api4u.Data.Seed
 {
     public class FoodSeedData
     {

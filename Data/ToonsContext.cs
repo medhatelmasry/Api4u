@@ -1,7 +1,9 @@
+using Api4u.Data.Seed;
 using Api4u.Models.Athletics;
 using Api4u.Models.Countries;
 using Api4u.Models.Courses;
 using Api4u.Models.Foods;
+using Api4u.Models.Health;
 using Api4u.Models.Movies;
 using Api4u.Models.Restaurants;
 using Api4u.Models.Species;
@@ -56,6 +58,12 @@ namespace Api4u.Data
 
         public virtual DbSet<Restaurant> Restaurants { get; set; }
         public virtual DbSet<Menu> MenuItems { get; set; }
+
+        public virtual DbSet<Hospital> Hospitals { get; set; }
+        public virtual DbSet<Patient> Patients { get; set; }
+        public virtual DbSet<Sickness> Sicknesses { get; set; }
+        public virtual DbSet<Medicine> Medicines { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -143,6 +151,22 @@ namespace Api4u.Data
 
             #region "Seed Menu Data"
             modelBuilder.Entity<Menu>().HasData(RestaurantSeedData.GetMenuItems());
+            #endregion
+
+            #region "Seed Hospital Data"
+            modelBuilder.Entity<Hospital>().HasData(HealthSeedData.GetHospitals());
+            #endregion
+
+            #region "Seed Patient Data"
+            modelBuilder.Entity<Patient>().HasData(HealthSeedData.GetPatients());
+            #endregion
+
+            #region "Seed Sickness Data"
+            modelBuilder.Entity<Sickness>().HasData(HealthSeedData.GetSicknesses());
+            #endregion
+
+            #region "Seed Medicine Data"
+            modelBuilder.Entity<Medicine>().HasData(HealthSeedData.GetMedicines());
             #endregion
 
         }

@@ -4,14 +4,16 @@ using Api4u.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api4u.Migrations
 {
     [DbContext(typeof(ToonsContext))]
-    partial class ToonsContextModelSnapshot : ModelSnapshot
+    [Migration("20200501205604_Hospital")]
+    partial class Hospital
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -722,9 +724,6 @@ namespace Api4u.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FrequencyInHours")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -737,53 +736,6 @@ namespace Api4u.Migrations
                     b.HasIndex("SicknessId");
 
                     b.ToTable("Medicines");
-
-                    b.HasData(
-                        new
-                        {
-                            MedicineId = 1,
-                            Dosage = 50,
-                            DosageUnit = "mg",
-                            FrequencyInHours = 8,
-                            Name = "Acarbose",
-                            SicknessId = 1
-                        },
-                        new
-                        {
-                            MedicineId = 2,
-                            Dosage = 850,
-                            DosageUnit = "mg",
-                            FrequencyInHours = 12,
-                            Name = "Metformin",
-                            SicknessId = 1
-                        },
-                        new
-                        {
-                            MedicineId = 3,
-                            Dosage = 150,
-                            DosageUnit = "mg",
-                            FrequencyInHours = 6,
-                            Name = "Prazosin",
-                            SicknessId = 2
-                        },
-                        new
-                        {
-                            MedicineId = 4,
-                            Dosage = 180,
-                            DosageUnit = "mg",
-                            FrequencyInHours = 8,
-                            Name = "Zoloft",
-                            SicknessId = 2
-                        },
-                        new
-                        {
-                            MedicineId = 5,
-                            Dosage = 20,
-                            DosageUnit = "mg",
-                            FrequencyInHours = 24,
-                            Name = "Benicar",
-                            SicknessId = 3
-                        });
                 });
 
             modelBuilder.Entity("Api4u.Models.Health.Patient", b =>
@@ -801,8 +753,9 @@ namespace Api4u.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("DateOfBirth")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -813,7 +766,7 @@ namespace Api4u.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("HospitalId")
                         .HasColumnType("int");
@@ -852,103 +805,6 @@ namespace Api4u.Migrations
                     b.HasIndex("HospitalId");
 
                     b.ToTable("Patients");
-
-                    b.HasData(
-                        new
-                        {
-                            PatientId = 1,
-                            City = "Delta",
-                            Country = "Canada",
-                            DateOfBirth = new DateTime(1987, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "sam@fox.ca",
-                            FirstName = "Sam",
-                            Gender = "M",
-                            HospitalId = 1,
-                            InDate = new DateTime(2020, 4, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Fox",
-                            OutDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "604-682-2344",
-                            PostalCode = "V6Z 1Y6",
-                            Province = "British Columbia",
-                            RoomNumber = "204a",
-                            Street = "1081 River Street"
-                        },
-                        new
-                        {
-                            PatientId = 2,
-                            City = "Surrey",
-                            Country = "Canada",
-                            DateOfBirth = new DateTime(1980, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "meg@roy.ca",
-                            FirstName = "Meg",
-                            Gender = "F",
-                            HospitalId = 1,
-                            InDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Roy",
-                            OutDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "604-286-4432",
-                            PostalCode = "V3Z 1P6",
-                            Province = "British Columbia",
-                            RoomNumber = "114b",
-                            Street = "181 Alma Road"
-                        },
-                        new
-                        {
-                            PatientId = 3,
-                            City = "Port Coquitlam",
-                            Country = "Canada",
-                            DateOfBirth = new DateTime(1977, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "joe@day.ca",
-                            FirstName = "Joe",
-                            Gender = "M",
-                            HospitalId = 2,
-                            InDate = new DateTime(2020, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Day",
-                            OutDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "604-943-0807",
-                            PostalCode = "V3P 2C4",
-                            Province = "British Columbia",
-                            RoomNumber = "304",
-                            Street = "870 Pitt River Road"
-                        },
-                        new
-                        {
-                            PatientId = 4,
-                            City = "Coquitlam",
-                            Country = "Canada",
-                            DateOfBirth = new DateTime(2005, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "ann@lee.ca",
-                            FirstName = "Ann",
-                            Gender = "F",
-                            HospitalId = 2,
-                            InDate = new DateTime(2020, 4, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Lee",
-                            OutDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "604-942-9856",
-                            PostalCode = "V6Y 2Y9",
-                            Province = "British Columbia",
-                            RoomNumber = "194",
-                            Street = "1870 Ottawa Avenue"
-                        },
-                        new
-                        {
-                            PatientId = 5,
-                            City = "New Wesminster",
-                            Country = "Canada",
-                            DateOfBirth = new DateTime(2015, 6, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "bob@ray.ca",
-                            FirstName = "Bob",
-                            Gender = "M",
-                            HospitalId = 3,
-                            InDate = new DateTime(2020, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Ray",
-                            OutDate = new DateTime(2020, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "604-870-4031",
-                            PostalCode = "V7W 2Y9",
-                            Province = "British Columbia",
-                            RoomNumber = "619a",
-                            Street = "7045 Main Street"
-                        });
                 });
 
             modelBuilder.Entity("Api4u.Models.Health.Sickness", b =>
@@ -970,38 +826,6 @@ namespace Api4u.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Sicknesses");
-
-                    b.HasData(
-                        new
-                        {
-                            SicknessId = 1,
-                            PatientId = 4,
-                            SicknessName = "Diabetes"
-                        },
-                        new
-                        {
-                            SicknessId = 2,
-                            PatientId = 4,
-                            SicknessName = "PTSD"
-                        },
-                        new
-                        {
-                            SicknessId = 3,
-                            PatientId = 2,
-                            SicknessName = "High Blood Pressure"
-                        },
-                        new
-                        {
-                            SicknessId = 4,
-                            PatientId = 3,
-                            SicknessName = "COVID-19"
-                        },
-                        new
-                        {
-                            SicknessId = 5,
-                            PatientId = 1,
-                            SicknessName = "Maternity"
-                        });
                 });
 
             modelBuilder.Entity("Api4u.Models.Movies.Actor", b =>

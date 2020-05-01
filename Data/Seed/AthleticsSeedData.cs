@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Api4u.Models.Athletics;
 
 // https://www.worldathletics.org/world-rankings/overall-ranking/men
-namespace Api4u.Data
+namespace Api4u.Data.Seed
 {
     public class AthleticsSeedData
     {

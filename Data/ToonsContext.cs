@@ -10,6 +10,7 @@ using Api4u.Models.Movies;
 using Api4u.Models.Athletics;
 using System;
 using Api4u.Models.Sports;
+using Api4u.Models.Restaurants;
 
 namespace Api4u.Data
 {
@@ -53,6 +54,9 @@ namespace Api4u.Data
 
         public virtual DbSet<Team> Teams { get; set; }
         public virtual DbSet<Player> Players { get; set; }
+
+        public virtual DbSet<Restaurant> Restaurants { get; set; }
+        public virtual DbSet<Menu> MenuItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -339,6 +343,14 @@ namespace Api4u.Data
                     Position = "Defense" 
                 }
             );
+            #endregion
+
+            #region "Seed Restaurant Data"
+            modelBuilder.Entity<Restaurant>().HasData(RestaurantSeedData.GetRestaurants());
+            #endregion
+
+            #region "Seed Menu Data"
+            modelBuilder.Entity<Menu>().HasData(RestaurantSeedData.GetMenuItems());
             #endregion
 
         }

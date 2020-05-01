@@ -4,14 +4,16 @@ using Api4u.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api4u.Migrations
 {
     [DbContext(typeof(ToonsContext))]
-    partial class ToonsContextModelSnapshot : ModelSnapshot
+    [Migration("20200430235435_Restaurants")]
+    partial class Restaurants
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -798,88 +800,6 @@ namespace Api4u.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("MenuItems");
-
-                    b.HasData(
-                        new
-                        {
-                            MenuId = 1,
-                            Name = "Oven Baked Lasagna",
-                            Price = 17.989999999999998,
-                            RestaurantId = 1,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 2,
-                            Name = "Spaghetti & Meatballs",
-                            Price = 17.989999999999998,
-                            RestaurantId = 1,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 3,
-                            Name = "Seafood Fettuccine",
-                            Price = 19.989999999999998,
-                            RestaurantId = 1,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 4,
-                            Name = "Barbecued Duck",
-                            Price = 25.5,
-                            RestaurantId = 2,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 5,
-                            Name = "Roasted Pork",
-                            Price = 9.75,
-                            RestaurantId = 2,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 6,
-                            Name = "Royal Hawaiian",
-                            Price = 18.989999999999998,
-                            RestaurantId = 3,
-                            Size = "10 \" Small"
-                        },
-                        new
-                        {
-                            MenuId = 7,
-                            Name = "Royal Hawaiian",
-                            Price = 27.989999999999998,
-                            RestaurantId = 3,
-                            Size = "13 \" Medium"
-                        },
-                        new
-                        {
-                            MenuId = 8,
-                            Name = "Chicken Tikka",
-                            Price = 4.9900000000000002,
-                            RestaurantId = 4,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 9,
-                            Name = "Butter Chicken",
-                            Price = 12.99,
-                            RestaurantId = 4,
-                            Size = "Regular"
-                        },
-                        new
-                        {
-                            MenuId = 10,
-                            Name = "Lamb Souvlaki",
-                            Price = 19.0,
-                            RestaurantId = 5,
-                            Size = "Regular"
-                        });
                 });
 
             modelBuilder.Entity("Api4u.Models.Restaurants.Restaurant", b =>
@@ -920,63 +840,6 @@ namespace Api4u.Migrations
                     b.HasKey("RestaurantId");
 
                     b.ToTable("Restaurants");
-
-                    b.HasData(
-                        new
-                        {
-                            RestaurantId = 1,
-                            City = "Coquitlam",
-                            Country = "Canada",
-                            FoodType = "Western Food",
-                            PostalCode = "V5G 1U8",
-                            Province = "British Columbia",
-                            RestaurantName = "White Spot",
-                            Street = "1096 Lougheed Highway"
-                        },
-                        new
-                        {
-                            RestaurantId = 2,
-                            City = "Coquitlam",
-                            Country = "Canada",
-                            FoodType = "Chinese Food",
-                            PostalCode = "V6A 1C5",
-                            Province = "British Columbia",
-                            RestaurantName = "Hons",
-                            Street = "310-3025 Lougheed Highway"
-                        },
-                        new
-                        {
-                            RestaurantId = 3,
-                            City = "Port Coquitlam",
-                            Country = "Canada",
-                            FoodType = "Western Food",
-                            PostalCode = "V3B 8A4",
-                            Province = "British Columbia",
-                            RestaurantName = "Boston Pizza",
-                            Street = "300 - 2325 Ottawa Street"
-                        },
-                        new
-                        {
-                            RestaurantId = 4,
-                            City = "Maple Ridge",
-                            Country = "Canada",
-                            FoodType = "Indian Food",
-                            PostalCode = "V2X 1X6",
-                            Province = "British Columbia",
-                            RestaurantName = "Maple Leaf Indian Cuisine",
-                            Street = "11956 207 Street"
-                        },
-                        new
-                        {
-                            RestaurantId = 5,
-                            City = "Maple Ridge",
-                            Country = "Canada",
-                            FoodType = "Greek Food",
-                            PostalCode = "V2X 2P9",
-                            Province = "British Columbia",
-                            RestaurantName = "Socrates Grill",
-                            Street = "20691 Lougheed Hwy #19"
-                        });
                 });
 
             modelBuilder.Entity("Api4u.Models.Species.Organism", b =>

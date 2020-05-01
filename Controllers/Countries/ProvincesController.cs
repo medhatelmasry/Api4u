@@ -9,7 +9,7 @@ using Api4u.Data;
 using Api4u.Models.Countries;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Countries
 {
     [Route("api/[controller]")]
     [ApiController]

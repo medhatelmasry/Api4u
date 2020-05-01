@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Toons
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -10,7 +10,7 @@ using Api4u.Models.Species;
 using Microsoft.Extensions.Configuration;
 using Api4u.Models.Restaurants;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Restaurants
 {
     [Route("api/[controller]")]
     [ApiController]

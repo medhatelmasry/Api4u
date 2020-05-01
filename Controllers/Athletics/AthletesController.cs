@@ -10,7 +10,7 @@ using Api4u.Models.Athletics;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Athletics
 {
     [Route("api/[controller]")]
     [ApiController]

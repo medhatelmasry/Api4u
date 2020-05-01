@@ -9,7 +9,7 @@ using Api4u.Data;
 using Api4u.Models.Species;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Species
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -10,7 +10,7 @@ using Api4u.Models.Countries;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Countries
 {
     [Route("api/[controller]")]
     [ApiController]

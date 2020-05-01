@@ -9,7 +9,7 @@ using Api4u.Data;
 using Api4u.Models.Foods;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Foods
 {
     [Route("api/[controller]")]
     [ApiController]

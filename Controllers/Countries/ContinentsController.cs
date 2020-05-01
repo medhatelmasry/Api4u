@@ -6,68 +6,68 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api4u.Data;
-using Api4u.Models.Courses;
+using Api4u.Models.Countries;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Countries
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("ToonsPolicy")]
-    public class CoursesController : ControllerBase
+    public class ContinentsController : ControllerBase
     {
         private readonly ToonsContext _context;
         private readonly IConfiguration _configuration;
 
-        public CoursesController(IConfiguration configuration, ToonsContext context)
+        public ContinentsController(IConfiguration configuration,ToonsContext context)
         {
             _configuration = configuration;
             _context = context;
         }
 
-        // GET: api/Courses
+        // GET: api/Continents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Course>>> GetCourses()
+        public async Task<ActionResult<IEnumerable<Continent>>> GetContinent()
         {
-            return await _context.Courses
+            return await _context.Continents
+            .Include(c => c.Countries)
             .ToListAsync();
         }
 
-        // GET: api/Courses/5
+        // GET: api/Continents/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Course>> GetCourse(string id)
+        public async Task<ActionResult<Continent>> GetContinent(string id)
         {
-            var course = await _context.Courses
-                .FindAsync(id);
+            var continent = await _context.Continents
+            .Include(c => c.Countries)
+            .FirstOrDefaultAsync(i => i.ContinentName == id);
 
-            if (course == null)
+            if (continent == null)
             {
                 return NotFound();
             }
 
-            return course;
+            return continent;
         }
 
-        // PUT: api/Courses/5
+        // PUT: api/Continents/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCourse(string id, Course course)
+        public async Task<IActionResult> PutContinent(string id, Continent continent)
         {
-            if (string.IsNullOrEmpty(course.Name)
-                || string.IsNullOrEmpty(course.CourseId)
-            ) return BadRequest("Name,  and CourseId are required.");
+            if (string.IsNullOrEmpty(continent.ContinentName)
+            ) return BadRequest("ContinentName is required.");
 
-            if (id != course.CourseId)
+            if (id != continent.ContinentName)
             {
                 return BadRequest();
             }
 
-            course.CourseId = System.Net.WebUtility.HtmlEncode(course.CourseId);
-            course.Name = System.Net.WebUtility.HtmlEncode(course.Name);
-
-            _context.Entry(course).State = EntityState.Modified;
+            continent.ContinentName = System.Net.WebUtility.HtmlEncode(continent.ContinentName);
+    
+            _context.Entry(continent).State = EntityState.Modified;
 
             try
             {
@@ -75,7 +75,7 @@ namespace Api4u.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CourseExists(id))
+                if (!ContinentExists(id))
                 {
                     return NotFound();
                 }
@@ -88,27 +88,25 @@ namespace Api4u.Controllers
             return NoContent();
         }
 
-        // POST: api/Courses
+        // POST: api/Continents
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Course>> PostCourse(Course course)
+        public async Task<ActionResult<Continent>> PostContinent(Continent continent)
         {
-            if (string.IsNullOrEmpty(course.Name)
-                || string.IsNullOrEmpty(course.CourseId)
-            ) return BadRequest("Name,  and CourseId are required.");
+            if (string.IsNullOrEmpty(continent.ContinentName)
+            ) return BadRequest("ContinentName is required.");
 
             string strMaxTblSize = _configuration["MaxTableSize"];
 
-            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Courses.Count() > Convert.ToInt32(strMaxTblSize))
+            if (!string.IsNullOrEmpty(strMaxTblSize) && _context.Continents.Count() > Convert.ToInt32(strMaxTblSize))
             {
                 return BadRequest($"Number of records exceeded {strMaxTblSize}.");
             }
 
-            course.CourseId = System.Net.WebUtility.HtmlEncode(course.CourseId);
-            course.Name = System.Net.WebUtility.HtmlEncode(course.Name);
-
-            _context.Courses.Add(course);
+            continent.ContinentName = System.Net.WebUtility.HtmlEncode(continent.ContinentName);
+    
+            _context.Continents.Add(continent);
             
             try
             {
@@ -116,7 +114,7 @@ namespace Api4u.Controllers
             }
             catch (DbUpdateException)
             {
-                if (CourseExists(course.CourseId))
+                if (ContinentExists(continent.ContinentName))
                 {
                     return Conflict();
                 }
@@ -126,28 +124,28 @@ namespace Api4u.Controllers
                 }
             }
 
-            return CreatedAtAction("GetCourse", new { id = course.CourseId }, course);
+            return CreatedAtAction("GetContinent", new { id = continent.ContinentName }, continent);
         }
 
-        // DELETE: api/Courses/5
+        // DELETE: api/Continents/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Course>> DeleteCourse(string id)
+        public async Task<ActionResult<Continent>> DeleteContinent(string id)
         {
-            var course = await _context.Courses.FindAsync(id);
-            if (course == null)
+            var continent = await _context.Continents.FindAsync(id);
+            if (continent == null)
             {
                 return NotFound();
             }
 
-            _context.Courses.Remove(course);
+            _context.Continents.Remove(continent);
             await _context.SaveChangesAsync();
 
-            return course;
+            return continent;
         }
 
-        private bool CourseExists(string id)
+        private bool ContinentExists(string id)
         {
-            return _context.Courses.Any(e => e.CourseId == id);
+            return _context.Continents.Any(e => e.ContinentName == id);
         }
     }
 }

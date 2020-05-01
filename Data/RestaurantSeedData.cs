@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Api4u.Models.Restaurants;
 
 namespace Api4u.Data
 {
     public class RestaurantSeedData
     {
-        public RestaurantSeedData()
-        {
-        }
-
         public static List<Restaurant> GetRestaurants()
         {
             List<Restaurant> restaurants = new List<Restaurant>()

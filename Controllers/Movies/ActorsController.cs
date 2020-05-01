@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Cors;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 
-namespace Api4u.Controllers
+namespace Api4u.Controllers.Movies
 {
     [Route("api/[controller]")]
     [ApiController]

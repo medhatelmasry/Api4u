@@ -30,7 +30,6 @@ namespace Api4u.Models.Health
         [Required]
         public string Province { get; set; }
 
-        [Required]
         public string PostalCode { get; set; }
 
         [Required]

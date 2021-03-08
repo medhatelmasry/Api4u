@@ -54,7 +54,7 @@ namespace Api4u.Models.Utils
             foreach (var p in pictures)
             {
                 //if (p.Url.Trim() == pictureUrl.Trim())
-                if string.Equals(p.Url.Trim(), pictureUrl.Trim(), StringComparison.OrdinalIgnoreCase)
+                if (string.Equals(p.Url.Trim(), pictureUrl.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
                     isOk = true;
                     break;
